@@ -56,27 +56,6 @@
 
     }
 
-    .selector {
-      margin-top: 40px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .selector button {
-      width: 120px;
-      margin: 0 10px;
-      padding: 16px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      background-color: #ffffff;
-      border: solid 2px #e361c3;
-      color: #e361c3;
-      border-radius: 8px;
-      box-shadow: 3px 4px 0px 0px #e361c3;
-    }
-
     .board {
       display: flex;
       flex-wrap: wrap;
@@ -199,16 +178,8 @@
       if (userName && allowedUsers.includes(userName)) {
         selector.style.display = 'none';
         initBoard(userName);
-      } else {
-        showUserSelector();
       }
     };
-
-    function showUserSelector() {
-      selector.style.display = 'flex';
-      selector.innerHTML =
-        allowedUsers.map(name => `<button onclick="selectUser('${name}')">${name}</button>`).join('');
-    }
 
     function selectUser(name) {
       localStorage.setItem("userName", name);
