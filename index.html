@@ -2,24 +2,45 @@
 <html lang="ko">
 
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>설이도 외우개! 여름방학 영단어</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
     body {
       margin: 0;
       padding: 0;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
+      height: 100%;
       font-family: 'Segoe UI', sans-serif;
       background: #f8f8fa;
       color: #333;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 400px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
-      /* 전체 스크롤 제거 */
     }
 
     .title {
       margin: 20px auto 0;
+    }
+
+    .title img {
+      height: 100px;
     }
 
     .profile-selector-wrapper {
@@ -28,83 +49,14 @@
       background: #f8f8fa;
       z-index: 10;
       padding: 10px 0;
-      /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04); */
-    }
-
-    .scrollable-board {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-    }
-
-    h1 {
-      color: #ff33aa;
-    }
-
-    .title img {
-      height: 100px;
-    }
-
-    .user-info div {
-      margin: 20px 40px;
-      padding: 10px 20px;
-      /* font-weight: bold;
-      border-radius: 100px;
-      background: #ffffff;
-      border: solid 2px #fbc0ec;
-      color: #e361c3; */
-
-    }
-
-    .board {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: center;
-    }
-
-    .level {
-      width: 90px;
-      height: 90px;
-      border-radius: 15px;
-      background: #fff;
-      border: 2px dashed #e4e4e4;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      transition: 0.3s;
-      cursor: pointer;
-    }
-
-    .sticker img {
-      width: 80px;
-      height: 80px;
-    }
-
-    .level.checked {
-      background-color: #f6f4d9;
-      border: 2px dashed #f185d5;
-    }
-
-    .level span {
-      font-size: 14px;
-      margin-top: 5px;
-    }
-
-    #loading {
-      margin-top: 40px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
 
     .profile-selector {
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin: 10px auto;
       flex-wrap: wrap;
+      margin: 0 10px;
     }
 
     .profile .circle {
@@ -132,44 +84,92 @@
       font-weight: bold;
       color: #e361c3;
     }
+
+    .scrollable-board {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 10px;
+    }
+
+    .board {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .level {
+      width: 90px;
+      height: 90px;
+      border-radius: 15px;
+      background: #fff;
+      border: 2px dashed #e4e4e4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    .level span {
+      font-size: 14px;
+    }
+
+    .level.checked {
+      background-color: #f6f4d9;
+      border: 2px dashed #f185d5;
+    }
+
+    .sticker img {
+      width: 80px;
+      height: 80px;
+    }
+
+    #loading {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
-  <div class="title"><img src="title.png" alt="설이도 외우개!"></div>
-  <div class="selector" id="userSelector"></div>
+  <div class="app">
+    <div class="title"><img src="title.png" alt="설이도 외우개!"></div>
+    <div class="selector" id="userSelector"></div>
 
-  <div class="profile-selector-wrapper">
-    <div class="profile-selector">
-      <div class="profile" onclick="selectUser('Milky')">
-        <div class="circle">Milky</div>
+    <div class="profile-selector-wrapper">
+      <div class="profile-selector">
+        <div class="profile" onclick="selectUser('Milky')">
+          <div class="circle">Milky</div>
+        </div>
+        <div class="profile" onclick="selectUser('Rachel')">
+          <div class="circle">Rachel</div>
+        </div>
+        <div class="profile" onclick="selectUser('Choi')">
+          <div class="circle">Choi</div>
+        </div>
+        <div class="profile" onclick="selectUser('Sunny')">
+          <div class="circle">Sunny</div>
+        </div>
       </div>
-      <div class="profile" onclick="selectUser('Rachel')">
-        <div class="circle">Rachel</div>
-      </div>
-      <div class="profile" onclick="selectUser('Choi')">
-        <div class="circle">Choi</div>
-      </div>
-      <div class="profile" onclick="selectUser('Sunny')">
-        <div class="circle">Sunny</div>
-      </div>
-  </div>
-  </div>
+    </div>
 
-  <!-- ✅ 로딩 이미지 추가 -->
-  <div id="loading" style="display: none;">
-    <img src="loading.gif" alt="로딩중" style="height: 400px">
-  </div>
-  <div class="scrollable-board" id="scrollArea">
-    <div class="board" id="board"> </div
+    <div id="loading" style="display: none;">
+      <img src="loading.gif" alt="로딩중" style="height: 300px; max-width: 90%;">
+    </div>
+
+    <div class="scrollable-board" id="scrollArea">
+      <div class="board" id="board"></div>
+    </div>
   </div>
 
   <script>
     const allowedUsers = ["Milky", "Rachel", "Choi", "Sunny"];
-    const userNameDisplay = document.getElementById("userNameDisplay");
-    const selector = document.getElementById("userSelector");
     const board = document.getElementById("board");
+    const selector = document.getElementById("userSelector");
 
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw-wLOMhql6OHdfxxD8NTaySWkgI8uZvP-wXO13KokAdI14_92v73StCmyfb77z6GSzzA/exec";
 
@@ -191,7 +191,7 @@
     function initBoard(name) {
       board.innerHTML = "";
       board.style.display = 'none';
-      document.getElementById("loading").style.display = 'flex';  // ✅ 로딩 시작
+      document.getElementById("loading").style.display = 'flex';
       highlightSelectedUser();
 
       axios.get(SCRIPT_URL, { params: { name } })
@@ -226,9 +226,7 @@
             board.appendChild(div);
           }
 
-          // ✅ 로딩 끝나고 보드 보여주기
           document.getElementById("loading").style.display = 'none';
-          // userNameDisplay.textContent = `${name}, 오늘도 성장 중!`;
           board.style.display = 'flex';
         })
         .catch(err => {
@@ -236,7 +234,6 @@
           document.getElementById("loading").style.display = 'none';
         });
     }
-
 
     function sendToSheet(name, level, checked) {
       axios.post(SCRIPT_URL, new URLSearchParams({
@@ -261,7 +258,6 @@
       });
     }
   </script>
-
 </body>
 
 </html>
