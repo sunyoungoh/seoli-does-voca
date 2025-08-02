@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <title>설이도 외우개! 여름방학 영단어</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f8f8fa;
+      color: #333;
+      overflow: hidden;
+      /* 전체 스크롤 제거 */
+    }
+
+    .title {
+      margin: 20px auto 0;
+    }
+
+    .profile-selector-wrapper {
+      position: sticky;
+      top: 0;
+      background: #f8f8fa;
+      z-index: 10;
+      padding: 10px 0;
+      /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04); */
+    }
+
+    .scrollable-board {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #ff33aa;
+    }
+
+    .title img {
+      height: 100px;
+    }
+
+    .user-info div {
+      margin: 20px 40px;
+      padding: 10px 20px;
+      /* font-weight: bold;
+      border-radius: 100px;
+      background: #ffffff;
+      border: solid 2px #fbc0ec;
+      color: #e361c3; */
+
+    }
+
+    .selector {
+      margin-top: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .selector button {
+      width: 120px;
+      margin: 0 10px;
+      padding: 16px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #ffffff;
+      border: solid 2px #e361c3;
+      color: #e361c3;
+      border-radius: 8px;
+      box-shadow: 3px 4px 0px 0px #e361c3;
+    }
+
+    .board {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .level {
+      width: 90px;
+      height: 90px;
+      border-radius: 15px;
+      background: #fff;
+      border: 2px dashed #e4e4e4;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    .sticker img {
+      width: 80px;
+      height: 80px;
+    }
+
+    .level.checked {
+      background-color: #f6f4d9;
+      border: 2px dashed #f185d5;
+    }
+
+    .level span {
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    #loading {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .profile-selector {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 10px auto;
+      flex-wrap: wrap;
+    }
+
+    .profile .circle {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background-color: #fff;
+      color: #444;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 14px;
+      cursor: pointer;
+      border: solid 1px #eee;
+      transition: 0.2s;
+    }
+
+    .profile .circle:hover {
+      background-color: #ffe4fa;
+      transform: scale(1.05);
+    }
+
+    .profile .circle.active {
+      border: 1px solid #e361c3;
+      font-weight: bold;
+      color: #e361c3;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+  <div class="title"><img src="title.png" alt="설이도 외우개!"></div>
+  <div class="selector" id="userSelector"></div>
+
+  <div class="profile-selector-wrapper">
+    <div class="profile-selector">
+      <div class="profile" onclick="selectUser('Milky')">
+        <div class="circle">Milky</div>
+      </div>
+      <div class="profile" onclick="selectUser('Rachel')">
+        <div class="circle">Rachel</div>
+      </div>
+      <div class="profile" onclick="selectUser('Choi')">
+        <div class="circle">Choi</div>
+      </div>
+      <div class="profile" onclick="selectUser('Sunny')">
+        <div class="circle">Sunny</div>
+      </div>
+  </div>
+  </div>
+
+  <!-- ✅ 로딩 이미지 추가 -->
+  <div id="loading" style="display: none;">
+    <img src="loading.gif" alt="로딩중" style="height: 400px">
+  </div>
+  <div class="scrollable-board" id="scrollArea">
+    <div class="board" id="board"> </div
+  </div>
+
+  <script>
+    const allowedUsers = ["Milky", "Rachel", "Choi", "Sunny"];
+    const userNameDisplay = document.getElementById("userNameDisplay");
+    const selector = document.getElementById("userSelector");
+    const board = document.getElementById("board");
+
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw-wLOMhql6OHdfxxD8NTaySWkgI8uZvP-wXO13KokAdI14_92v73StCmyfb77z6GSzzA/exec";
+
+    window.onload = () => {
+      const userName = localStorage.getItem("userName");
+      if (userName && allowedUsers.includes(userName)) {
+        selector.style.display = 'none';
+        initBoard(userName);
+      } else {
+        showUserSelector();
+      }
+    };
+
+    function showUserSelector() {
+      selector.style.display = 'flex';
+      selector.innerHTML =
+        allowedUsers.map(name => `<button onclick="selectUser('${name}')">${name}</button>`).join('');
+    }
+
+    function selectUser(name) {
+      localStorage.setItem("userName", name);
+      highlightSelectedUser();
+      selector.style.display = 'none';
+      initBoard(name);
+    }
+
+    function initBoard(name) {
+      board.innerHTML = "";
+      board.style.display = 'none';
+      document.getElementById("loading").style.display = 'flex';  // ✅ 로딩 시작
+      highlightSelectedUser();
+
+      axios.get(SCRIPT_URL, { params: { name } })
+        .then(res => {
+          const checkedLevels = new Set(res.data.levels);
+
+          for (let i = 1; i <= 32; i++) {
+            const levelStr = i;
+            const div = document.createElement("div");
+            div.className = "level";
+            const stickerImg = `sticker_${String(i).padStart(2, '0')}.png`;
+
+            const isChecked = checkedLevels.has(levelStr);
+            div.innerHTML = isChecked
+              ? `<div class="sticker"><img src="${stickerImg}" alt="스티커"></div>`
+              : `<span>Level ${i}</span>`;
+
+            if (isChecked) div.classList.add("checked");
+
+            div.addEventListener("click", () => {
+              const nowChecked = !checkedLevels.has(levelStr);
+              nowChecked ? checkedLevels.add(levelStr) : checkedLevels.delete(levelStr);
+
+              div.innerHTML = nowChecked
+                ? `<div class="sticker"><img src="${stickerImg}" alt="스티커"></div>`
+                : `<span>Level ${i}</span>`;
+
+              div.classList.toggle("checked", nowChecked);
+              sendToSheet(name, levelStr, nowChecked ? "TRUE" : "FALSE");
+            });
+
+            board.appendChild(div);
+          }
+
+          // ✅ 로딩 끝나고 보드 보여주기
+          document.getElementById("loading").style.display = 'none';
+          // userNameDisplay.textContent = `${name}, 오늘도 성장 중!`;
+          board.style.display = 'flex';
+        })
+        .catch(err => {
+          console.error("❌ 불러오기 오류:", err);
+          document.getElementById("loading").style.display = 'none';
+        });
+    }
+
+
+    function sendToSheet(name, level, checked) {
+      axios.post(SCRIPT_URL, new URLSearchParams({
+        name,
+        level,
+        checked
+      }))
+        .then(res => console.log("✅ 저장됨:", res.data))
+        .catch(err => console.error("❌ 저장 오류:", err));
+    }
+
+    function highlightSelectedUser() {
+      const selectedUser = localStorage.getItem("userName");
+      const circles = document.querySelectorAll(".profile .circle");
+
+      circles.forEach(circle => {
+        if (circle.textContent === selectedUser) {
+          circle.classList.add("active");
+        } else {
+          circle.classList.remove("active");
+        }
+      });
+    }
+  </script>
+
+</body>
+
+</html>
